@@ -13,12 +13,11 @@ class BookMigration extends Migration
     public function up()
     {
 
-     /*   Schema::create('authors', function(Blueprint $table){
+        Schema::create('authors', function(Blueprint $table){
             $table->id();
             $table->string('name');
-            $table->string('surname');
             $table->timestamps();
-        });*/
+        });
 
         Schema::create('books', function(Blueprint $table){
             $table->id();
@@ -54,6 +53,5 @@ class BookMigration extends Migration
         Schema::dropIfExists('books');
         Schema::dropIfExists('authors');
         Schema::dropIfExists('statuses');
-
     }
 }

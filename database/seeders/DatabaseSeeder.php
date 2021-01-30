@@ -1,18 +1,19 @@
 <?php
 
-namespace Database\Seeders;
+    namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
+    use App\Models\Models\Book;
+    use App\Models\Models\Author;
+    use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
-{
-    /**
-     * Seed the application's database.
-     *
-     * @return void
-     */
-    public function run()
+    class DatabaseSeeder extends Seeder
     {
-        // \App\Models\User::factory(10)->create();
+        public function run()
+        {
+            //    $user = User::factory()->create();
+            //  $user->assignRole('Admin');
+
+            Author::factory()->count(5)->has(Book::factory()->count(5), 'books')->create();
+
+        }
     }
-}
