@@ -13,7 +13,9 @@ import Notifications from 'vue-notification';
 Vue.use(Notifications);
 
 const app = document.getElementById('app');
-
+import vSelect from 'vue-select';
+import 'vue-select/dist/vue-select.css';
+Vue.component('v-select', vSelect)
 new Vue({
     render: (h) =>
         h(InertiaApp, {

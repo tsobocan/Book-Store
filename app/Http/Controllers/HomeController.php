@@ -24,13 +24,19 @@
             $input = $request->all();
             $book = null;
             $status = null;
+            $user = null;
 
             Validator::make($input, [
                 'fromDate' => 'date|required',
                 'toDate' => 'date|required',
                 'book' => 'required',
                 'action' => 'required',
-            ])->after(function ($validator) use ($input, &$book, &$status) {
+            ])->after(function ($validator) use ($input, &$book, &$status, &$user) {
+                if(array_key_exists('selected', $input) && is_array($input['selected']) && array_key_exists('id',
+                $input['selected'])){
+                    $user = User::query()->find($input['selected']['id']);
+                }
+
                 $book = Book::query()->where('id', $input['book']['id'])->first();
                 if(!$book){
                     $validator->errors()->add('other', 'Book does not exist.');
@@ -55,6 +61,9 @@
                         ['valid_from', '<=', $dateTo],
                         ['valid_to', '>=', $dateFrom],
                     ])
+                    ->whereHas('currentStatus', function($query){
+                        $query->where('title', '!=', 'Completed');
+                    })
                     ->count();
                 if($taken >= $book->quantity){
                     $validator->errors()->add('other', 'All books are taken.');
@@ -63,10 +72,16 @@
             })->validate();
 
             BookAction::query()->create([
+                'user_Id' => $user ? $user->id : auth()->id(),
                 'book_id' => $book->id,
                 'status_id' => $status->id,
                 'valid_from' => $request->get('fromDate'),
                 'valid_to' => $request->get('toDate'),
             ]);
+        }
+
+        protected function fetchUsers(Request $request)
+        {
+            return User::query()->where('name', 'LIKE' , '%' . $request->get('query') . '%')->get();
         }
     }

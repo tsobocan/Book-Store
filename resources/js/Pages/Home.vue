@@ -1,7 +1,7 @@
 <template>
   <app-layout>
     <notifications group="all" />
-    
+
     <template #header>
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
         Books </h2>
@@ -46,10 +46,7 @@
                   </td>
                   <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
                     <div class="flex items-center">
-                      <span role="button" class="mr-2" @click="startAction('rent', book)">Rent</span>
-                      <span role="button" @click="startAction('reserve', book)">Reserve</span>
-
-
+                      <span role="button" @click="startAction('reserve', book)" v-if="$page.props.user">Reserve</span>
                     </div>
                   </td>
                 </tr>
@@ -62,7 +59,11 @@
                 </template>
 
                 <template #content>
-                  <div class="mb-1">Select dates from which you want to rent/reserve book.</div>
+                  <div class="flex-col w-full mb-2" v-if="$page.props.isAdmin">
+                    <label>User:</label>
+                    <v-select v-model="form.selected" @search="fetchOptions" label="name" :options="options" class="w-full"/>
+                  </div>
+                  <div class="mb-1">Select dates from which you want to reserve book.</div>
                   <div class="inline-flex w-full">
                             <span class="w-full mr-2">
                               <label>{{ form.action === 'rent' ? 'Rent' : 'Reserve' }} from:</label>
@@ -123,7 +124,9 @@ export default {
     return {
       confirmAction: false,
       books: [],
+      options: [],
       form: {
+        selected: null,
         book: null,
         fromDate: null,
         toDate: null,
@@ -147,15 +150,20 @@ export default {
 
   methods: {
     clearErrors() {
-      this.form.error = {
-        fromDate: null,
-        toDate: null,
-        other: null,
-      };
+      this.form.error.fromDate = null;
+      this.form.error.toDate = null;
+      this.form.error.other = null;
     },
 
     closeModal() {
       this.confirmAction = false
+    },
+
+    fetchOptions (search, loading) {
+      let vm = this;
+      axios.post(route('users'), {query : search}).then((response) => {
+        vm.options = response.data;
+      });
     },
 
     startAction(action, book) {
@@ -165,6 +173,7 @@ export default {
     },
 
     confirmActionProcess() {
+
       this.form.processing = true;
       this.clearErrors();
       let vm = this;

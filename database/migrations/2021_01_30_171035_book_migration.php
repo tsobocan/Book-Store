@@ -35,6 +35,7 @@ class BookMigration extends Migration
 
         Schema::create('actions', function(Blueprint $table){
             $table->id();
+            $table->foreignId('user_id')->constrained('users');
             $table->foreignId('book_id')->constrained('books');
             $table->foreignId('status_id')->constrained('statuses');
             $table->dateTime('valid_from');

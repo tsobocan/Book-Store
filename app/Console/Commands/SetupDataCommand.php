@@ -21,5 +21,6 @@ class SetupDataCommand extends Command
 
         Status::create(['title' => 'Reserved']);
         Status::create(['title' => 'Rented']);
+        Status::create(['title' => 'Completed']);
     }
 }

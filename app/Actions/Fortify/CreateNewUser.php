@@ -33,7 +33,7 @@ class CreateNewUser implements CreatesNewUsers
             'password' => Hash::make($input['password']),
         ]);
 
-        $user->syncRoles('Uporabnik');
+        $user->syncRoles('User');
 
         return $user;
     }
