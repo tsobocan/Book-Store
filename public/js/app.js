@@ -4446,10 +4446,7 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     AppLayout: _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_2__.default
   },
-  props: {
-    canLogin: Boolean,
-    canRegister: Boolean
-  },
+  props: {},
   data: function data() {
     return {
       books: []
@@ -32623,7 +32620,7 @@ var render = function() {
                   staticClass:
                     "font-semibold text-xl text-gray-800 leading-tight"
                 },
-                [_vm._v("\n      Books ")]
+                [_vm._v("\n      Books  ")]
               )
             ]
           },
@@ -32633,135 +32630,152 @@ var render = function() {
     },
     [
       _vm._v(" "),
-      _c("div", { staticClass: "py-12" }, [
-        _c("div", { staticClass: "max-w-7xl mx-auto sm:px-6 lg:px-8" }, [
-          _c(
-            "div",
-            { staticClass: "bg-white overflow-hidden shadow-xl sm:rounded-lg" },
-            [
-              _c("div", { staticClass: "p-6" }, [
-                _c(
-                  "div",
-                  { staticClass: "flex items-center text-indigo-700 text-xl" },
-                  [_vm._v("\n              All Books\n            ")]
-                ),
-                _vm._v(" "),
-                _c("div", { staticClass: "flex items-center   mt-5" }, [
-                  _c("table", { staticClass: "min-w-full" }, [
-                    _c("thead", [
-                      _c("tr", [
-                        _c(
-                          "th",
-                          {
-                            staticClass:
-                              "px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider"
-                          },
-                          [_vm._v("ID\n                  ")]
-                        ),
+      _vm.$page.props.isAdmin
+        ? _c("div", { staticClass: "py-12" }, [
+            _c("div", { staticClass: "max-w-7xl mx-auto sm:px-6 lg:px-8" }, [
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "bg-white overflow-hidden shadow-xl sm:rounded-lg"
+                },
+                [
+                  _c("div", { staticClass: "p-6" }, [
+                    _c(
+                      "div",
+                      {
+                        staticClass: "flex items-center text-indigo-700 text-xl"
+                      },
+                      [_vm._v("\n              All Books\n            ")]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "flex items-center   mt-5" }, [
+                      _c("table", { staticClass: "min-w-full" }, [
+                        _c("thead", [
+                          _c("tr", [
+                            _c(
+                              "th",
+                              {
+                                staticClass:
+                                  "px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider"
+                              },
+                              [_vm._v("ID\n                  ")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "th",
+                              {
+                                staticClass:
+                                  "px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                    Title\n                  "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "th",
+                              {
+                                staticClass:
+                                  "px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                    Author\n                  "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "th",
+                              {
+                                staticClass:
+                                  "px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                    Options\n                  "
+                                )
+                              ]
+                            )
+                          ])
+                        ]),
                         _vm._v(" "),
                         _c(
-                          "th",
-                          {
-                            staticClass:
-                              "px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
-                          },
-                          [
-                            _vm._v(
-                              "\n                    Title\n                  "
-                            )
-                          ]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "th",
-                          {
-                            staticClass:
-                              "px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
-                          },
-                          [
-                            _vm._v(
-                              "\n                    Author\n                  "
-                            )
-                          ]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "th",
-                          {
-                            staticClass:
-                              "px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider"
-                          },
-                          [
-                            _vm._v(
-                              "\n                    Options\n                  "
-                            )
-                          ]
+                          "tbody",
+                          _vm._l(_vm.books, function(book) {
+                            return _c("tr", [
+                              _c(
+                                "td",
+                                {
+                                  staticClass:
+                                    "px-6 py-4 whitespace-no-wrap border-b border-gray-500"
+                                },
+                                [
+                                  _c(
+                                    "div",
+                                    { staticClass: "flex items-center" },
+                                    [_vm._v(_vm._s(book.id) + ".")]
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "td",
+                                {
+                                  staticClass:
+                                    "px-6 py-4 whitespace-no-wrap border-b border-gray-500"
+                                },
+                                [
+                                  _c(
+                                    "div",
+                                    { staticClass: "flex items-center" },
+                                    [_vm._v(_vm._s(book.title))]
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "td",
+                                {
+                                  staticClass:
+                                    "px-6 py-4 whitespace-no-wrap border-b border-gray-500"
+                                },
+                                [
+                                  _c(
+                                    "div",
+                                    { staticClass: "flex items-center" },
+                                    [_vm._v(_vm._s(book.author.name))]
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "td",
+                                {
+                                  staticClass:
+                                    "px-6 py-4 whitespace-no-wrap border-b border-gray-500"
+                                },
+                                [
+                                  _c("div", {
+                                    staticClass: "flex items-center"
+                                  })
+                                ]
+                              )
+                            ])
+                          }),
+                          0
                         )
                       ])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "tbody",
-                      _vm._l(_vm.books, function(book) {
-                        return _c("tr", [
-                          _c(
-                            "td",
-                            {
-                              staticClass:
-                                "px-6 py-4 whitespace-no-wrap border-b border-gray-500"
-                            },
-                            [
-                              _c("div", { staticClass: "flex items-center" }, [
-                                _vm._v(_vm._s(book.id) + ".")
-                              ])
-                            ]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "td",
-                            {
-                              staticClass:
-                                "px-6 py-4 whitespace-no-wrap border-b border-gray-500"
-                            },
-                            [
-                              _c("div", { staticClass: "flex items-center" }, [
-                                _vm._v(_vm._s(book.title))
-                              ])
-                            ]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "td",
-                            {
-                              staticClass:
-                                "px-6 py-4 whitespace-no-wrap border-b border-gray-500"
-                            },
-                            [
-                              _c("div", { staticClass: "flex items-center" }, [
-                                _vm._v(_vm._s(book.author.name))
-                              ])
-                            ]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "td",
-                            {
-                              staticClass:
-                                "px-6 py-4 whitespace-no-wrap border-b border-gray-500"
-                            },
-                            [_c("div", { staticClass: "flex items-center" })]
-                          )
-                        ])
-                      }),
-                      0
-                    )
+                    ])
                   ])
-                ])
-              ])
-            ]
-          )
-        ])
-      ])
+                ]
+              )
+            ])
+          ])
+        : _vm._e()
     ]
   )
 }
