@@ -12,4 +12,6 @@ class Status extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+
+    const VALID_OPTIONS = ['rent' => 'Reserved', 'reserve' => 'Rented'];
 }

@@ -26,7 +26,8 @@ class BookFactory extends Factory
         return [
             'title' => ucfirst(implode(' ', $this->faker->words(rand(3,5)))),
             'year' => $this->faker->year,
-            'created_at' => now()
+            'created_at' => now(),
+            'quantity' => rand(1,5)
         ];
     }
 }

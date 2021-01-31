@@ -20,6 +20,6 @@ class SetupDataCommand extends Command
         Role::create(['name' => 'User']);
 
         Status::create(['title' => 'Reserved']);
-        Status::create(['title' => 'Booked']);
+        Status::create(['title' => 'Rented']);
     }
 }

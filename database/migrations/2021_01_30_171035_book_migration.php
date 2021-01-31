@@ -24,6 +24,7 @@ class BookMigration extends Migration
             $table->string('title');
             $table->foreignId('author_id')->constrained('authors');
             $table->integer('year');
+            $table->integer('quantity');
             $table->timestamps();
         });
 

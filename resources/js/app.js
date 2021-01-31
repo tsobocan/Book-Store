@@ -9,6 +9,9 @@ Vue.mixin({ methods: { route } });
 Vue.use(InertiaPlugin);
 Vue.use(PortalVue);
 
+import Notifications from 'vue-notification';
+Vue.use(Notifications);
+
 const app = document.getElementById('app');
 
 new Vue({
