@@ -28,6 +28,12 @@ class BookMigration extends Migration
             $table->timestamps();
         });
 
+        Schema::create('book_options', function(Blueprint $table){
+            $table->id();
+            $table->string('title');
+            $table->foreignId('book_id')->constrained('books');
+        });
+
         Schema::create('statuses', function(Blueprint $table){
             $table->id();
             $table->string('title');
@@ -38,6 +44,7 @@ class BookMigration extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('book_id')->constrained('books');
             $table->foreignId('status_id')->constrained('statuses');
+            $table->foreignId('option_id')->constrained('book_options');
             $table->dateTime('valid_from');
             $table->dateTime('valid_to');
             $table->timestamps();
@@ -52,6 +59,7 @@ class BookMigration extends Migration
     public function down()
     {
         Schema::dropIfExists('actions');
+        Schema::dropIfExists('book_options');
         Schema::dropIfExists('books');
         Schema::dropIfExists('authors');
         Schema::dropIfExists('statuses');

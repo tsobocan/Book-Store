@@ -4,6 +4,7 @@
 
     use Carbon\Carbon;
     use App\Models\User;
+    use App\Models\BookOption;
     use App\Models\Models\Book;
     use Illuminate\Http\Request;
     use App\Models\Models\Status;
@@ -19,62 +20,75 @@
             return Book::with('author')->get();
         }
 
+        protected function activeBooks()
+        {
+            return BookAction::with(['book.author', 'user', 'actualBook', 'currentStatus'])->whereHas('currentStatus',
+                    function ($query) {
+                        $query->where('title', '!=', 'Completed');
+                    })->get();
+        }
+
         protected function createAction(Request $request)
         {
             $input = $request->all();
             $book = null;
             $status = null;
             $user = null;
-
+            $taken = collect();
             Validator::make($input, [
                 'fromDate' => 'date|required',
                 'toDate' => 'date|required',
                 'book' => 'required',
                 'action' => 'required',
-            ])->after(function ($validator) use ($input, &$book, &$status, &$user) {
-                if(array_key_exists('selected', $input) && is_array($input['selected']) && array_key_exists('id',
-                $input['selected'])){
+            ])->after(function ($validator) use ($input, &$book, &$status, &$user, &$taken) {
+                if (array_key_exists('selected', $input) && is_array($input['selected']) && array_key_exists('id',
+                        $input['selected'])) {
                     $user = User::query()->find($input['selected']['id']);
                 }
 
                 $book = Book::query()->where('id', $input['book']['id'])->first();
-                if(!$book){
+                if (!$book) {
                     $validator->errors()->add('other', 'Book does not exist.');
                 }
 
-                $action = array_key_exists($input['action'], Status::VALID_OPTIONS) ? Status::VALID_OPTIONS[$input['action']] : null;
+                $action = array_key_exists($input['action'],
+                    Status::VALID_OPTIONS) ? Status::VALID_OPTIONS[$input['action']] : null;
                 $status = Status::query()->where('title', 'LIKE', $action)->first();
 
-                if(!$status){
+                if (!$status) {
                     $validator->errors()->add('other', 'No valid action.');
                 }
 
                 $dateFrom = Carbon::parse($input['fromDate'])->setHour(12);
                 $dateTo = Carbon::parse($input['toDate'])->setHour(12);;
 
-                if(!$dateTo->isAfter($dateFrom)){
+                if (!$dateTo->isAfter($dateFrom)) {
                     $validator->errors()->add('other', 'Wrong dates.');
                 }
 
-                $taken = BookAction::query()->where('book_id', $book->id)
-                    ->where([
+                $taken = BookAction::query()->where('book_id', $book->id)->where([
                         ['valid_from', '<=', $dateTo],
                         ['valid_to', '>=', $dateFrom],
-                    ])
-                    ->whereHas('currentStatus', function($query){
+                    ])->with('actualBook')->whereHas('currentStatus', function ($query) {
                         $query->where('title', '!=', 'Completed');
-                    })
-                    ->count();
-                if($taken >= $book->quantity){
+                    })->get();
+                if ($taken->count() >= $book->quantity) {
                     $validator->errors()->add('other', 'All books are taken.');
                 }
 
             })->validate();
 
+            $ids = $taken->pluck('actualBook')->transform(function ($item) {
+                return $item->id;
+            });
+
+            $freeBook = BookOption::query()->whereNotIn('id', $ids)->first();
+
             BookAction::query()->create([
                 'user_Id' => $user ? $user->id : auth()->id(),
                 'book_id' => $book->id,
                 'status_id' => $status->id,
+                'option_id' => $freeBook->id,
                 'valid_from' => $request->get('fromDate'),
                 'valid_to' => $request->get('toDate'),
             ]);
@@ -82,6 +96,21 @@
 
         protected function fetchUsers(Request $request)
         {
-            return User::query()->where('name', 'LIKE' , '%' . $request->get('query') . '%')->get();
+            return User::query()->where('name', 'LIKE', '%' . $request->get('query') . '%')->get();
+        }
+
+        protected function rent(Request $request)
+        {
+            $status = Status::query()->where('title', 'LIKE', 'Rented')->first();
+            if ($status) {
+                BookAction::query()->where('id', $request->get('id'))->update([
+                    'status_id' => $status->id
+                ]);
+            }
+        }
+
+        protected function returnBook(Request $request)
+        {
+            BookAction::query()->where('id', $request->get('id'))->delete();
         }
     }

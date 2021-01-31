@@ -25,6 +25,10 @@
                   Dashboard
                 </jet-nav-link>
 
+                <jet-nav-link :href="route('actions')" :active="route().current('actions')" v-if="$page.props.isAdmin">
+                  Rents & Reservations
+                </jet-nav-link>
+
                 <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block" v-if="!$page.props.user">
 
                   <inertia-link :href="route('login')" class="text-sm text-gray-700 underline">

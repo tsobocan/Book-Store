@@ -21,6 +21,9 @@
 
     Route::prefix('v1')->group(function () {
         Route::get('/books/all', [HomeController::class, 'books']);
+        Route::get('/books/active', [HomeController::class, 'activeBooks']);
+        Route::post('/books/rent', [HomeController::class, 'rent'])->name('rent');
+        Route::post('/books/return', [HomeController::class, 'returnBook'])->name('return');
     });
 
 

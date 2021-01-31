@@ -36,3 +36,7 @@
         return Inertia::render('BookSearch');
     })->name('books');
 
+
+    Route::get('/actions', function () {
+        return Inertia::render('Actions');
+    })->name('actions');
