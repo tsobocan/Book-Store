@@ -4664,6 +4664,64 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -4685,8 +4743,23 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       confirmAction: false,
+      confirmBookEdit: false,
       books: [],
       options: [],
+      formBook: {
+        processing: false,
+        quantity: 0,
+        id: null,
+        author: null,
+        title: null,
+        year: null,
+        error: {
+          quantity: null,
+          author: null,
+          title: null,
+          year: null
+        }
+      },
       form: {
         selected: null,
         book: null,
@@ -4703,19 +4776,67 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
-    var vm = this;
-    axios__WEBPACK_IMPORTED_MODULE_1___default().get(_apiVersion__WEBPACK_IMPORTED_MODULE_0__.default.version + '/books/all').then(function (response) {
-      vm.books = response.data;
-    });
+    this.getBooks();
   },
   methods: {
+    getBooks: function getBooks() {
+      var vm = this;
+      axios__WEBPACK_IMPORTED_MODULE_1___default().get(_apiVersion__WEBPACK_IMPORTED_MODULE_0__.default.version + '/books/all').then(function (response) {
+        vm.books = response.data;
+      });
+    },
+    saveBookDetails: function saveBookDetails() {
+      var _this = this;
+
+      this.formBook.processing = true;
+      this.clearBookErrors();
+      var vm = this;
+      axios__WEBPACK_IMPORTED_MODULE_1___default().post(route('edit'), this.formBook).then(function () {
+        vm.formBook.processing = false;
+        vm.closeBookModal();
+        vm.$notify({
+          group: 'all',
+          title: 'Saved'
+        });
+        vm.clearBookErrors();
+      })["catch"](function (error) {
+        _this.formBook.processing = false;
+
+        if (error.response.data.errors.title) {
+          _this.formBook.error.title = error.response.data.errors.title[0];
+        }
+
+        if (error.response.data.errors.year) {
+          _this.formBook.error.year = error.response.data.errors.year[0];
+        }
+
+        if (error.response.data.errors.author) {
+          _this.formBook.error.author = error.response.data.errors.author[0];
+        }
+
+        if (error.response.data.errors.quantity) {
+          _this.formBook.error.quantity = error.response.data.errors.quantity[0];
+        }
+      })["finally"](function () {
+        return vm.getBooks();
+      });
+    },
     clearErrors: function clearErrors() {
       this.form.error.fromDate = null;
       this.form.error.toDate = null;
       this.form.error.other = null;
     },
+    clearBookErrors: function clearBookErrors() {
+      this.formBook.error.quantity = null;
+      this.formBook.error.title = null;
+      this.formBook.error.author = null;
+      this.formBook.error.year = null;
+    },
     closeModal: function closeModal() {
       this.confirmAction = false;
+    },
+    closeBookModal: function closeBookModal() {
+      this.confirmBookEdit = false;
     },
     fetchOptions: function fetchOptions(search, loading) {
       var vm = this;
@@ -4725,13 +4846,34 @@ __webpack_require__.r(__webpack_exports__);
         vm.options = response.data;
       });
     },
+    resetBookManage: function resetBookManage() {
+      this.formBook.quantity = 0;
+      this.formBook.id = null;
+      this.formBook.author = null;
+      this.formBook.title = null;
+      this.formBook.year = null;
+    },
+    openBookManageModal: function openBookManageModal() {
+      var book = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      this.resetBookManage();
+
+      if (book !== null) {
+        this.formBook.quantity = book.quantity;
+        this.formBook.id = book.id;
+        this.formBook.author = book.author.name;
+        this.formBook.title = book.title;
+        this.formBook.year = book.year;
+      }
+
+      this.confirmBookEdit = true;
+    },
     startAction: function startAction(action, book) {
       this.form.action = action;
       this.form.book = book;
       this.confirmAction = true;
     },
     confirmActionProcess: function confirmActionProcess() {
-      var _this = this;
+      var _this2 = this;
 
       this.form.processing = true;
       this.clearErrors();
@@ -4745,18 +4887,18 @@ __webpack_require__.r(__webpack_exports__);
         });
         vm.clearErrors();
       })["catch"](function (error) {
-        _this.form.processing = false;
+        _this2.form.processing = false;
 
         if (error.response.data.errors.fromDate) {
-          _this.form.error.fromDate = error.response.data.errors.fromDate[0];
+          _this2.form.error.fromDate = error.response.data.errors.fromDate[0];
         }
 
         if (error.response.data.errors.other) {
-          _this.form.error.other = error.response.data.errors.other[0];
+          _this2.form.error.other = error.response.data.errors.other[0];
         }
 
         if (error.response.data.errors.toDate) {
-          _this.form.error.toDate = error.response.data.errors.toDate[0];
+          _this2.form.error.toDate = error.response.data.errors.toDate[0];
         }
       });
     }
@@ -33758,11 +33900,30 @@ var render = function() {
             { staticClass: "bg-white overflow-hidden shadow-xl sm:rounded-lg" },
             [
               _c("div", { staticClass: "p-6" }, [
-                _c(
-                  "div",
-                  { staticClass: "flex items-center text-indigo-700 text-xl" },
-                  [_vm._v("\n            All Books\n          ")]
-                ),
+                _c("div", { staticClass: "flex justify-between w-full" }, [
+                  _c(
+                    "span",
+                    { staticClass: "text-indigo-700 text-xl font-black" },
+                    [_vm._v("All Books")]
+                  ),
+                  _vm._v(" "),
+                  _vm.$page.props.isAdmin
+                    ? _c(
+                        "button",
+                        {
+                          staticClass:
+                            "inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              return _vm.openBookManageModal(null)
+                            }
+                          }
+                        },
+                        [_vm._v("Add Book\n            ")]
+                      )
+                    : _vm._e()
+                ]),
                 _vm._v(" "),
                 _c(
                   "div",
@@ -33896,6 +34057,25 @@ var render = function() {
                                             }
                                           },
                                           [_vm._v("Reserve")]
+                                        )
+                                      : _vm._e(),
+                                    _vm._v(" "),
+                                    _vm.$page.props.user &&
+                                    _vm.$page.props.isAdmin
+                                      ? _c(
+                                          "span",
+                                          {
+                                            staticClass: "mx-3",
+                                            attrs: { role: "button" },
+                                            on: {
+                                              click: function($event) {
+                                                return _vm.openBookManageModal(
+                                                  book
+                                                )
+                                              }
+                                            }
+                                          },
+                                          [_vm._v("Edit")]
                                         )
                                       : _vm._e()
                                   ]
@@ -34087,6 +34267,222 @@ var render = function() {
                                           : "Reserve now"
                                       ) +
                                       "\n                "
+                                  )
+                                ]
+                              )
+                            ]
+                          },
+                          proxy: true
+                        }
+                      ])
+                    }),
+                    _vm._v(" "),
+                    _c("jet-dialog-modal", {
+                      attrs: { show: _vm.confirmBookEdit },
+                      on: { close: _vm.closeBookModal },
+                      scopedSlots: _vm._u([
+                        {
+                          key: "title",
+                          fn: function() {
+                            return [
+                              _c("span", { staticClass: "font-black" }, [
+                                _vm._v(" Manage Book")
+                              ])
+                            ]
+                          },
+                          proxy: true
+                        },
+                        {
+                          key: "content",
+                          fn: function() {
+                            return [
+                              _c("div", { staticClass: "mb-1 text-gray-500" }, [
+                                _vm._v(
+                                  "Here you can add/edit all details about books."
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "inline-flex w-full mb-2" },
+                                [
+                                  _c(
+                                    "span",
+                                    { staticClass: "w-full mr-2" },
+                                    [
+                                      _c("label", [_vm._v("Title:")]),
+                                      _vm._v(" "),
+                                      _c("jet-input", {
+                                        staticClass: "mt-1 block  w-full",
+                                        attrs: {
+                                          type: "text",
+                                          placeholder: "Title"
+                                        },
+                                        model: {
+                                          value: _vm.formBook.title,
+                                          callback: function($$v) {
+                                            _vm.$set(_vm.formBook, "title", $$v)
+                                          },
+                                          expression: "formBook.title"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("jet-input-error", {
+                                        staticClass: "mt-2",
+                                        attrs: {
+                                          message: _vm.formBook.error.title
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "span",
+                                    { staticClass: " w-full ml-2" },
+                                    [
+                                      _c("label", [_vm._v("Author:")]),
+                                      _vm._v(" "),
+                                      _c("jet-input", {
+                                        staticClass: "mt-1 block  w-full",
+                                        attrs: {
+                                          type: "text",
+                                          placeholder: "Author"
+                                        },
+                                        model: {
+                                          value: _vm.formBook.author,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.formBook,
+                                              "author",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "formBook.author"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("jet-input-error", {
+                                        staticClass: "mt-2",
+                                        attrs: {
+                                          message: _vm.formBook.error.author
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "inline-flex w-full" }, [
+                                _c(
+                                  "span",
+                                  { staticClass: "w-full mr-2" },
+                                  [
+                                    _c("label", [_vm._v("Year:")]),
+                                    _vm._v(" "),
+                                    _c("jet-input", {
+                                      staticClass: "mt-1 block  w-full",
+                                      attrs: {
+                                        type: "number",
+                                        placeholder: "Year of publication"
+                                      },
+                                      model: {
+                                        value: _vm.formBook.year,
+                                        callback: function($$v) {
+                                          _vm.$set(_vm.formBook, "year", $$v)
+                                        },
+                                        expression: "formBook.year"
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c("jet-input-error", {
+                                      staticClass: "mt-2",
+                                      attrs: {
+                                        message: _vm.formBook.error.year
+                                      }
+                                    })
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "span",
+                                  { staticClass: " w-full ml-2" },
+                                  [
+                                    _c("label", [_vm._v("Quantity:")]),
+                                    _vm._v(" "),
+                                    _c("jet-input", {
+                                      staticClass: "mt-1 block  w-full",
+                                      attrs: {
+                                        type: "number",
+                                        placeholder: "Quantity",
+                                        min: "1"
+                                      },
+                                      model: {
+                                        value: _vm.formBook.quantity,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.formBook,
+                                            "quantity",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "formBook.quantity"
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c("jet-input-error", {
+                                      staticClass: "mt-2",
+                                      attrs: {
+                                        message: _vm.formBook.error.quantity
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ]
+                          },
+                          proxy: true
+                        },
+                        {
+                          key: "footer",
+                          fn: function() {
+                            return [
+                              _c(
+                                "jet-secondary-button",
+                                {
+                                  nativeOn: {
+                                    click: function($event) {
+                                      return _vm.closeBookModal($event)
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                  Close\n                "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "jet-button",
+                                {
+                                  staticClass: "ml-2",
+                                  class: {
+                                    "opacity-50": _vm.formBook.processing
+                                  },
+                                  attrs: { disabled: _vm.formBook.processing },
+                                  nativeOn: {
+                                    click: function($event) {
+                                      return _vm.saveBookDetails($event)
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                  Save\n                "
                                   )
                                 ]
                               )

@@ -30,6 +30,7 @@
     })->name('dashboard');
 
     Route::middleware('auth:sanctum')->post('/book/action', [HomeController::class, 'createAction'])->name('action');
+    Route::middleware('auth:sanctum')->post('/book/save', [HomeController::class, 'editBook'])->name('edit');
     Route::middleware('auth:sanctum')->post('/users', [HomeController::class, 'fetchUsers'])->name('users');
 
     Route::get('/search', function () {
