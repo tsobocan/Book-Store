@@ -201,10 +201,10 @@ export default {
       confirmBookEdit: false,
       books: [],
       options: [],
-      search : {
-        title : null,
-        year : null,
-        author : null,
+      search: {
+        title: null,
+        year: null,
+        author: null,
       },
       formBook: {
         processing: false,
@@ -247,7 +247,7 @@ export default {
       let vm = this;
       const query = Object.keys(this.search)
           .map(key => {
-            if(this.search[key] !== null){
+            if (this.search[key] !== null) {
               return `${key}=${this.search[key]}`
             }
           }).filter(x => !!x)
@@ -256,9 +256,9 @@ export default {
         vm.books = response.data;
       });
     },
-    deleteBook(id){
+    deleteBook(id) {
       let vm = this;
-      axios.post(route('delete'), {id : id}).then((response) => {
+      axios.post(route('delete'), {id: id}).then((response) => {
         vm.$notify({
           group: 'all',
           title: 'Deleted.',
