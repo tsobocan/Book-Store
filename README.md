@@ -4,8 +4,8 @@
 Installation is simple:
 
 - Create project from Github.
-- Run composer install.
-- Run set .env file (required only database fields).
+- Run composer install and set .env file (required only database fields).
+- *Run npm install and npm run production if needed.
 - Run php artisan migrate.
 - Run php artisan setup:data.
 - Run php artisan db:seed to save some data.
