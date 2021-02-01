@@ -3244,13 +3244,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -3622,15 +3615,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _apiVersion__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/apiVersion */ "./resources/js/apiVersion.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Layouts/AppLayout */ "./resources/js/Layouts/AppLayout.vue");
-/* harmony import */ var _Jetstream_DialogModal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Jetstream/DialogModal */ "./resources/js/Jetstream/DialogModal.vue");
-/* harmony import */ var _Jetstream_SecondaryButton__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Jetstream/SecondaryButton */ "./resources/js/Jetstream/SecondaryButton.vue");
-/* harmony import */ var _Jetstream_Input__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/Jetstream/Input */ "./resources/js/Jetstream/Input.vue");
-/* harmony import */ var _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/Jetstream/InputError */ "./resources/js/Jetstream/InputError.vue");
-/* harmony import */ var _Jetstream_Button__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/Jetstream/Button */ "./resources/js/Jetstream/Button.vue");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Layouts/AppLayout */ "./resources/js/Layouts/AppLayout.vue");
+/* harmony import */ var _Jetstream_SecondaryButton__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Jetstream/SecondaryButton */ "./resources/js/Jetstream/SecondaryButton.vue");
+/* harmony import */ var _Jetstream_Input__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Jetstream/Input */ "./resources/js/Jetstream/Input.vue");
+/* harmony import */ var _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Jetstream/InputError */ "./resources/js/Jetstream/InputError.vue");
+/* harmony import */ var _Jetstream_Button__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/Jetstream/Button */ "./resources/js/Jetstream/Button.vue");
 //
 //
 //
@@ -3717,12 +3708,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-
-
 
 
 
@@ -3731,12 +3716,11 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
-    AppLayout: _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_2__.default,
-    JetSecondaryButton: _Jetstream_SecondaryButton__WEBPACK_IMPORTED_MODULE_4__.default,
-    JetDialogModal: _Jetstream_DialogModal__WEBPACK_IMPORTED_MODULE_3__.default,
-    JetInput: _Jetstream_Input__WEBPACK_IMPORTED_MODULE_5__.default,
-    JetInputError: _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_6__.default,
-    JetButton: _Jetstream_Button__WEBPACK_IMPORTED_MODULE_7__.default
+    AppLayout: _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_1__.default,
+    JetSecondaryButton: _Jetstream_SecondaryButton__WEBPACK_IMPORTED_MODULE_2__.default,
+    JetInput: _Jetstream_Input__WEBPACK_IMPORTED_MODULE_3__.default,
+    JetInputError: _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_4__.default,
+    JetButton: _Jetstream_Button__WEBPACK_IMPORTED_MODULE_5__.default
   },
   props: {},
   data: function data() {
@@ -3747,38 +3731,38 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
-    this.fetchData();
+    this.getReservedAndRented();
   },
   methods: {
-    fetchData: function fetchData() {
+    getReservedAndRented: function getReservedAndRented() {
       var vm = this;
-      axios__WEBPACK_IMPORTED_MODULE_1___default().get(_apiVersion__WEBPACK_IMPORTED_MODULE_0__.default.version + '/books/active').then(function (response) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default().get(route('active')).then(function (response) {
         vm.books = response.data;
       });
     },
     rent: function rent(id) {
       var vm = this;
-      axios__WEBPACK_IMPORTED_MODULE_1___default().post(route('rent'), {
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post(route('rent'), {
         id: id
       }).then(function () {
         vm.$notify({
           group: 'all',
           title: 'Rented'
         });
-        vm.fetchData();
+        vm.getReservedAndRented();
       });
     },
     returnOrCancelBook: function returnOrCancelBook(id, option) {
       var vm = this;
       var text = option === 'cancel' ? 'Canceled.' : 'Returned';
-      axios__WEBPACK_IMPORTED_MODULE_1___default().post(route('return'), {
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post(route('return'), {
         id: id
       }).then(function () {
         vm.$notify({
           group: 'all',
           title: text
         });
-        vm.fetchData();
+        vm.getReservedAndRented();
       });
     }
   }
@@ -4722,6 +4706,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -4746,6 +4747,11 @@ __webpack_require__.r(__webpack_exports__);
       confirmBookEdit: false,
       books: [],
       options: [],
+      search: {
+        title: null,
+        year: null,
+        author: null
+      },
       formBook: {
         processing: false,
         quantity: 0,
@@ -4780,13 +4786,34 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     getBooks: function getBooks() {
+      var _this = this;
+
       var vm = this;
-      axios__WEBPACK_IMPORTED_MODULE_1___default().get(_apiVersion__WEBPACK_IMPORTED_MODULE_0__.default.version + '/books/all').then(function (response) {
+      var query = Object.keys(this.search).map(function (key) {
+        if (_this.search[key] !== null) {
+          return "".concat(key, "=").concat(_this.search[key]);
+        }
+      }).filter(function (x) {
+        return !!x;
+      }).join('&');
+      axios__WEBPACK_IMPORTED_MODULE_1___default().get(_apiVersion__WEBPACK_IMPORTED_MODULE_0__.default.version + '/books?' + query).then(function (response) {
         vm.books = response.data;
       });
     },
+    deleteBook: function deleteBook(id) {
+      var vm = this;
+      axios__WEBPACK_IMPORTED_MODULE_1___default().post(route('delete'), {
+        id: id
+      }).then(function (response) {
+        vm.$notify({
+          group: 'all',
+          title: 'Deleted.'
+        });
+        vm.getBooks();
+      });
+    },
     saveBookDetails: function saveBookDetails() {
-      var _this = this;
+      var _this2 = this;
 
       this.formBook.processing = true;
       this.clearBookErrors();
@@ -4800,22 +4827,22 @@ __webpack_require__.r(__webpack_exports__);
         });
         vm.clearBookErrors();
       })["catch"](function (error) {
-        _this.formBook.processing = false;
+        _this2.formBook.processing = false;
 
         if (error.response.data.errors.title) {
-          _this.formBook.error.title = error.response.data.errors.title[0];
+          _this2.formBook.error.title = error.response.data.errors.title[0];
         }
 
         if (error.response.data.errors.year) {
-          _this.formBook.error.year = error.response.data.errors.year[0];
+          _this2.formBook.error.year = error.response.data.errors.year[0];
         }
 
         if (error.response.data.errors.author) {
-          _this.formBook.error.author = error.response.data.errors.author[0];
+          _this2.formBook.error.author = error.response.data.errors.author[0];
         }
 
         if (error.response.data.errors.quantity) {
-          _this.formBook.error.quantity = error.response.data.errors.quantity[0];
+          _this2.formBook.error.quantity = error.response.data.errors.quantity[0];
         }
       })["finally"](function () {
         return vm.getBooks();
@@ -4873,7 +4900,7 @@ __webpack_require__.r(__webpack_exports__);
       this.confirmAction = true;
     },
     confirmActionProcess: function confirmActionProcess() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.form.processing = true;
       this.clearErrors();
@@ -4887,18 +4914,18 @@ __webpack_require__.r(__webpack_exports__);
         });
         vm.clearErrors();
       })["catch"](function (error) {
-        _this2.form.processing = false;
+        _this3.form.processing = false;
 
         if (error.response.data.errors.fromDate) {
-          _this2.form.error.fromDate = error.response.data.errors.fromDate[0];
+          _this3.form.error.fromDate = error.response.data.errors.fromDate[0];
         }
 
         if (error.response.data.errors.other) {
-          _this2.form.error.other = error.response.data.errors.other[0];
+          _this3.form.error.other = error.response.data.errors.other[0];
         }
 
         if (error.response.data.errors.toDate) {
-          _this2.form.error.toDate = error.response.data.errors.toDate[0];
+          _this3.form.error.toDate = error.response.data.errors.toDate[0];
         }
       });
     }
@@ -5253,9 +5280,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DeleteUserForm__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DeleteUserForm */ "./resources/js/Pages/Profile/DeleteUserForm.vue");
 /* harmony import */ var _Jetstream_SectionBorder__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Jetstream/SectionBorder */ "./resources/js/Jetstream/SectionBorder.vue");
 /* harmony import */ var _LogoutOtherBrowserSessionsForm__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./LogoutOtherBrowserSessionsForm */ "./resources/js/Pages/Profile/LogoutOtherBrowserSessionsForm.vue");
-/* harmony import */ var _TwoFactorAuthenticationForm__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./TwoFactorAuthenticationForm */ "./resources/js/Pages/Profile/TwoFactorAuthenticationForm.vue");
-/* harmony import */ var _UpdatePasswordForm__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./UpdatePasswordForm */ "./resources/js/Pages/Profile/UpdatePasswordForm.vue");
-/* harmony import */ var _UpdateProfileInformationForm__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./UpdateProfileInformationForm */ "./resources/js/Pages/Profile/UpdateProfileInformationForm.vue");
+/* harmony import */ var _UpdatePasswordForm__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./UpdatePasswordForm */ "./resources/js/Pages/Profile/UpdatePasswordForm.vue");
+/* harmony import */ var _UpdateProfileInformationForm__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./UpdateProfileInformationForm */ "./resources/js/Pages/Profile/UpdateProfileInformationForm.vue");
 //
 //
 //
@@ -5290,13 +5316,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-
 
 
 
@@ -5310,9 +5329,8 @@ __webpack_require__.r(__webpack_exports__);
     DeleteUserForm: _DeleteUserForm__WEBPACK_IMPORTED_MODULE_1__.default,
     JetSectionBorder: _Jetstream_SectionBorder__WEBPACK_IMPORTED_MODULE_2__.default,
     LogoutOtherBrowserSessionsForm: _LogoutOtherBrowserSessionsForm__WEBPACK_IMPORTED_MODULE_3__.default,
-    TwoFactorAuthenticationForm: _TwoFactorAuthenticationForm__WEBPACK_IMPORTED_MODULE_4__.default,
-    UpdatePasswordForm: _UpdatePasswordForm__WEBPACK_IMPORTED_MODULE_5__.default,
-    UpdateProfileInformationForm: _UpdateProfileInformationForm__WEBPACK_IMPORTED_MODULE_6__.default
+    UpdatePasswordForm: _UpdatePasswordForm__WEBPACK_IMPORTED_MODULE_4__.default,
+    UpdateProfileInformationForm: _UpdateProfileInformationForm__WEBPACK_IMPORTED_MODULE_5__.default
   }
 });
 
@@ -5889,6 +5907,7 @@ window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.withCredentials = true;
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -30744,7 +30763,7 @@ var render = function() {
                       [
                         _c(
                           "inertia-link",
-                          { attrs: { href: _vm.route("dashboard") } },
+                          { attrs: { href: _vm.route("home") } },
                           [
                             _c("jet-application-mark", {
                               staticClass: "block h-9 w-auto"
@@ -30773,23 +30792,6 @@ var render = function() {
                           },
                           [_vm._v("\n                Books\n              ")]
                         ),
-                        _vm._v(" "),
-                        _vm.$page.props.user
-                          ? _c(
-                              "jet-nav-link",
-                              {
-                                attrs: {
-                                  href: _vm.route("dashboard"),
-                                  active: _vm.route().current("dashboard")
-                                }
-                              },
-                              [
-                                _vm._v(
-                                  "\n                Dashboard\n              "
-                                )
-                              ]
-                            )
-                          : _vm._e(),
                         _vm._v(" "),
                         _vm.$page.props.isAdmin
                           ? _c(
@@ -31402,19 +31404,6 @@ var render = function() {
                       },
                       [_vm._v("\n            Books\n          ")]
                     ),
-                    _vm._v(" "),
-                    _vm.$page.props.user
-                      ? _c(
-                          "jet-responsive-nav-link",
-                          {
-                            attrs: {
-                              href: _vm.route("dashboard"),
-                              active: _vm.route().current("dashboard")
-                            }
-                          },
-                          [_vm._v("\n            Dashboard\n          ")]
-                        )
-                      : _vm._e(),
                     _vm._v(" "),
                     !_vm.$page.props.user
                       ? _c(
@@ -32493,7 +32482,7 @@ var render = function() {
                                 _vm._v(" "),
                                 _c("small", [
                                   _vm._v(
-                                    "ISBN: " +
+                                    "Code: " +
                                       _vm._s(bookAction.actual_book.title)
                                   )
                                 ])
@@ -32622,7 +32611,13 @@ var render = function() {
                                       },
                                       [
                                         _c("jet-secondary-button", [
-                                          _vm._v("Book returned")
+                                          _c(
+                                            "span",
+                                            {
+                                              staticClass: "whitespace-nowrap"
+                                            },
+                                            [_vm._v("Book returned")]
+                                          )
                                         ])
                                       ],
                                       1
@@ -33920,10 +33915,75 @@ var render = function() {
                             }
                           }
                         },
-                        [_vm._v("Add Book\n            ")]
+                        [_vm._v("\n              Add Book\n            ")]
                       )
                     : _vm._e()
                 ]),
+                _vm._v(" "),
+                _vm.$page.props.user && _vm.$page.props.isAdmin
+                  ? _c("div", { staticClass: "flex flex-col" }, [
+                      _c("div", { staticClass: "font-bold" }, [
+                        _vm._v("Search options")
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "flex justify-between w-full bg-gray-100 p-2"
+                        },
+                        [
+                          _c("jet-input", {
+                            staticClass: "mt-1 block w-1/4",
+                            attrs: { type: "text", placeholder: "Book Title" },
+                            model: {
+                              value: _vm.search.title,
+                              callback: function($$v) {
+                                _vm.$set(_vm.search, "title", $$v)
+                              },
+                              expression: "search.title"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("jet-input", {
+                            staticClass: "mt-1 block w-1/4",
+                            attrs: { type: "text", placeholder: "Author" },
+                            model: {
+                              value: _vm.search.author,
+                              callback: function($$v) {
+                                _vm.$set(_vm.search, "author", $$v)
+                              },
+                              expression: "search.author"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("jet-input", {
+                            staticClass: "mt-1 block w-1/4",
+                            attrs: { type: "text", placeholder: "Year" },
+                            model: {
+                              value: _vm.search.year,
+                              callback: function($$v) {
+                                _vm.$set(_vm.search, "year", $$v)
+                              },
+                              expression: "search.year"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "button",
+                            {
+                              staticClass:
+                                "inline-flex items-center px-4 py-2 bg-blue-200 border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150",
+                              attrs: { type: "button" },
+                              on: { click: _vm.getBooks }
+                            },
+                            [_vm._v("\n                Search\n              ")]
+                          )
+                        ],
+                        1
+                      )
+                    ])
+                  : _vm._e(),
                 _vm._v(" "),
                 _c(
                   "div",
@@ -34046,6 +34106,7 @@ var render = function() {
                                       ? _c(
                                           "span",
                                           {
+                                            staticClass: "mx-1",
                                             attrs: { role: "button" },
                                             on: {
                                               click: function($event) {
@@ -34065,7 +34126,7 @@ var render = function() {
                                       ? _c(
                                           "span",
                                           {
-                                            staticClass: "mx-3",
+                                            staticClass: "mx-1",
                                             attrs: { role: "button" },
                                             on: {
                                               click: function($event) {
@@ -34076,6 +34137,23 @@ var render = function() {
                                             }
                                           },
                                           [_vm._v("Edit")]
+                                        )
+                                      : _vm._e(),
+                                    _vm._v(" "),
+                                    _vm.$page.props.user &&
+                                    _vm.$page.props.isAdmin
+                                      ? _c(
+                                          "span",
+                                          {
+                                            staticClass: "mx-1 text-red-500",
+                                            attrs: { role: "button" },
+                                            on: {
+                                              click: function($event) {
+                                                return _vm.deleteBook(book.id)
+                                              }
+                                            }
+                                          },
+                                          [_vm._v("Delete")]
                                         )
                                       : _vm._e()
                                   ]
@@ -35092,7 +35170,7 @@ var render = function() {
                   staticClass:
                     "font-semibold text-xl text-gray-800 leading-tight"
                 },
-                [_vm._v("\n            Profil\n        ")]
+                [_vm._v("\n            Profile\n        ")]
               )
             ]
           },
@@ -35126,20 +35204,6 @@ var render = function() {
                   "div",
                   [
                     _c("update-password-form", {
-                      staticClass: "mt-10 sm:mt-0"
-                    }),
-                    _vm._v(" "),
-                    _c("jet-section-border")
-                  ],
-                  1
-                )
-              : _vm._e(),
-            _vm._v(" "),
-            _vm.$page.props.jetstream.canManageTwoFactorAuthentication
-              ? _c(
-                  "div",
-                  [
-                    _c("two-factor-authentication-form", {
                       staticClass: "mt-10 sm:mt-0"
                     }),
                     _vm._v(" "),

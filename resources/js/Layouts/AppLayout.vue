@@ -10,7 +10,7 @@
             <div class="flex">
               <!-- Logo -->
               <div class="flex-shrink-0 flex items-center">
-                <inertia-link :href="route('dashboard')">
+                <inertia-link :href="route('home')">
                   <jet-application-mark class="block h-9 w-auto"/>
                 </inertia-link>
               </div>
@@ -19,10 +19,6 @@
               <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                 <jet-nav-link :href="route('home')" :active="route().current('home')">
                   Books
-                </jet-nav-link>
-
-                <jet-nav-link :href="route('dashboard')" :active="route().current('dashboard')" v-if="$page.props.user">
-                  Dashboard
                 </jet-nav-link>
 
                 <jet-nav-link :href="route('actions')" :active="route().current('actions')" v-if="$page.props.isAdmin">
@@ -181,10 +177,7 @@
             <jet-nav-link :href="route('home')" :active="route().current('home')">
               Books
             </jet-nav-link>
-            <jet-responsive-nav-link :href="route('dashboard')" :active="route().current('dashboard')"
-                                     v-if="$page.props.user">
-              Dashboard
-            </jet-responsive-nav-link>
+
             <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block" v-if="!$page.props.user">
 
               <inertia-link :href="route('login')" class="text-sm text-gray-700 underline">

@@ -15,15 +15,8 @@
     |
     */
 
-    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-        return $request->user();
-    });
-
     Route::prefix('v1')->group(function () {
-        Route::get('/books/all', [HomeController::class, 'books']);
-        Route::get('/books/active', [HomeController::class, 'activeBooks']);
-        Route::post('/books/rent', [HomeController::class, 'rent'])->name('rent');
-        Route::post('/books/return', [HomeController::class, 'returnBook'])->name('return');
+        Route::get('/books', [HomeController::class, 'books']);
     });
 
 

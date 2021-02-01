@@ -13,5 +13,5 @@ class Status extends Model
 
     public $timestamps = false;
 
-    const VALID_OPTIONS = ['rent' => 'Reserved', 'reserve' => 'Rented', 'complete' => 'Completed'];
+    const VALID_OPTIONS = ['reserve' => 'Reserved', 'rent' => 'Rented', 'complete' => 'Completed'];
 }

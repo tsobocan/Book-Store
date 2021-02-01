@@ -2,34 +2,75 @@
 
     namespace App\Http\Controllers;
 
+    use Exception;
     use Carbon\Carbon;
     use App\Models\User;
     use Ramsey\Uuid\Uuid;
+    use App\Logic\BookHelper;
     use App\Models\BookOption;
     use App\Models\Models\Book;
     use Illuminate\Http\Request;
     use App\Models\Models\Status;
     use App\Models\Models\Author;
     use App\Models\Models\BookAction;
-    use Illuminate\Support\Facades\Hash;
-    use Illuminate\Notifications\Action;
+    use Illuminate\Http\JsonResponse;
     use Illuminate\Support\Facades\Validator;
+    use Illuminate\Database\Eloquent\Builder;
+    use Illuminate\Database\Eloquent\Collection;
+    use Illuminate\Validation\ValidationException;
 
     class HomeController extends Controller
     {
-        protected function books()
+        /**
+         * Returns all books with conditions based on URL parameters.
+         * @param Request $request
+         * @return JsonResponse
+         */
+        protected function books(Request $request): JsonResponse
         {
-            return Book::with('author')->get();
+            $books = Book::query()->with('author');
+
+            if ($request->filled('title')) {
+                $books->where('title', 'LIKE', '%' . $request->get('title') . '%');
+            }
+            if ($request->filled('year')) {
+                $books->where('year', $request->get('year'));
+            }
+            if ($request->filled('author')) {
+                $books->whereHas('author', function ($query) use ($request) {
+                    $query->where('name', 'LIKE', '%' . $request->get('author') . '%');
+                });
+            }
+
+            return response()->json($books->get());
         }
 
-        protected function activeBooks()
+        /**
+         * Returns all reserved and rented action(books).
+         * Code -> this is actually unique identifier of a single book in this case.
+         * @return JsonResponse
+         */
+        protected function activeBooks(): JsonResponse
         {
-            return BookAction::with(['book.author', 'user', 'actualBook', 'currentStatus'])->whereHas('currentStatus',
-                function ($query) {
-                    $query->where('title', '!=', 'Completed');
-                })->get();
+            if(!auth()->user()->hasRole('Admin')){
+                return response()->json();
+            }
+
+            return response()->json(BookAction::with([
+                'book.author',
+                'user',
+                'actualBook',
+                'currentStatus'
+            ])->whereHas('currentStatus', function ($query) {
+                $query->where('title', '!=', 'Completed');
+            })->get());
         }
 
+        /**
+         * Adds action on a book. Automatically picks one single unit of a book.
+         * @param Request $request
+         * @throws ValidationException
+         */
         protected function createAction(Request $request)
         {
             $input = $request->all();
@@ -68,16 +109,11 @@
                     $validator->errors()->add('other', 'Wrong dates.');
                 }
 
-                $taken = BookAction::query()->where('book_id', $book->id)->where([
-                    ['valid_from', '<=', $dateTo],
-                    ['valid_to', '>=', $dateFrom],
-                ])->with('actualBook')->whereHas('currentStatus', function ($query) {
-                    $query->where('title', '!=', 'Completed');
-                })->get();
+                $taken = (new BookHelper())->takenBooks($book->id,$dateFrom, $dateTo);
+
                 if ($taken->count() >= $book->quantity) {
                     $validator->errors()->add('other', 'All books are taken.');
                 }
-
             })->validate();
 
             $ids = $taken->pluck('actualBook')->transform(function ($item) {
@@ -96,11 +132,23 @@
             ]);
         }
 
+        /**
+         * Returns users matching query;
+         * @param Request $request
+         * @return Builder[]|Collection|JsonResponse
+         */
         protected function fetchUsers(Request $request)
         {
+            if(!auth()->user()->hasRole('Admin')){
+                return response()->json();
+            }
             return User::query()->where('name', 'LIKE', '%' . $request->get('query') . '%')->get();
         }
 
+        /**
+         * Changes status to "Rented".
+         * @param Request $request
+         */
         protected function rent(Request $request)
         {
             $status = Status::query()->where('title', 'LIKE', 'Rented')->first();
@@ -111,18 +159,41 @@
             }
         }
 
+        /**
+         * Removes action from a list. Valid for returning/canceling.
+         * @param Request $request
+         */
         protected function returnBook(Request $request)
         {
             BookAction::query()->where('id', $request->get('id'))->delete();
         }
 
+        /**
+         * Removes book from database.
+         * @param Request $request
+         * @throws Exception
+         */
+        protected function deleteBook(Request $request)
+        {
+            $book = Book::query()->where('id', $request->get('id'))->first();
+            if ($book) {
+                BookAction::query()->where('book_id', $request->get('id'))->delete();
+                BookOption::query()->where('book_id', $request->get('id'))->delete();
+                $book->delete();
+            }
+        }
+
+        /**
+         * Adds or updates book. Syncs all units of a book.
+         * @param Request $request
+         * @throws ValidationException
+         */
         protected function editBook(Request $request)
         {
             $input = $request->all();
             $book = null;
             $status = null;
             $user = null;
-            $taken = collect();
 
             Validator::make($input, [
                 'title' => 'required|min:2',
@@ -137,42 +208,21 @@
             $newQuantity = $request->get('quantity');
             if ($book) {
                 $oldQuantity = $book->quantity;
-
-
                 $book->update([
                     'author_id' => $author->id,
                     'title' => $request->get('title'),
                     'year' => $request->get('year'),
                     'quantity' => $newQuantity,
                 ]);
-
-                if ($newQuantity < $oldQuantity) {
-                    $toRemove = BookOption::query()->where('book_id',
-                        $book->id)->limit($oldQuantity - $newQuantity)->get();
-
-                    BookAction::query()->whereIn('option_id', $toRemove->pluck('id'))->delete();
-                    $toRemove->each->delete();
-                } elseif ($newQuantity > $oldQuantity) {
-                    do {
-                        BookOption::query()->create(['book_id' => $book->id, 'title' => Uuid::uuid4()->toString()]);
-                        $oldQuantity = $oldQuantity + 1;
-                    } while ($oldQuantity != $request->get('quantity'));
-                }
             } else {
                 $oldQuantity = 0;
-                    $book = Book::query()->create([
-                        'author_id' => $author->id,
-                        'title' => $request->get('title'),
-                        'year' => $request->get('year'),
-                        'quantity' => $newQuantity,
-                    ]);
-
-                do {
-                    BookOption::query()->create(['book_id' => $book->id, 'title' => Uuid::uuid4()->toString()]);
-                    $oldQuantity = $oldQuantity + 1;
-                } while ($oldQuantity != $request->get('quantity'));
+                $book = Book::query()->create([
+                    'author_id' => $author->id,
+                    'title' => $request->get('title'),
+                    'year' => $request->get('year'),
+                    'quantity' => $newQuantity,
+                ]);
             }
-
-
+            (new BookHelper())->syncBookInstances($book, $newQuantity, $oldQuantity);
         }
     }

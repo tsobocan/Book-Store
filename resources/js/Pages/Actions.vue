@@ -10,12 +10,10 @@
     <div class="py-12">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-
           <div class="p-6">
             <div class="flex items-center text-indigo-700 text-xl">
               All
             </div>
-
             <div class="flex items-center mt-5">
               <table class="min-w-full">
                 <thead>
@@ -43,7 +41,7 @@
                       <strong>
                         {{ bookAction.book.title }}, {{ bookAction.book.author.name }}, {{ bookAction.book.year }}
                       </strong>
-                      <small>ISBN: {{ bookAction.actual_book.title }}</small>
+                      <small>Code: {{ bookAction.actual_book.title }}</small>
                     </div>
                   </td>
                   <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
@@ -71,7 +69,7 @@
                          <jet-secondary-button>Cancel</jet-secondary-button>
                       </span>
                       <span @click="returnOrCancelBook(bookAction.id, 'return')" v-if="$page.props.isAdmin && bookAction.current_status.title === 'Rented'">
-                         <jet-secondary-button>Book returned</jet-secondary-button>
+                         <jet-secondary-button><span class="whitespace-nowrap">Book returned</span></jet-secondary-button>
                       </span>
                     </div>
                   </td>
@@ -81,19 +79,14 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
-
   </app-layout>
 </template>
 
 <script>
-
-import apiVersion from "@/apiVersion";
 import axios from "axios";
 import AppLayout from '@/Layouts/AppLayout';
-import JetDialogModal from '@/Jetstream/DialogModal'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import JetInput from '@/Jetstream/Input'
 import JetInputError from '@/Jetstream/InputError'
@@ -101,7 +94,7 @@ import JetButton from '@/Jetstream/Button'
 
 export default {
   components: {
-    AppLayout, JetSecondaryButton, JetDialogModal, JetInput, JetInputError, JetButton
+    AppLayout, JetSecondaryButton, JetInput, JetInputError, JetButton
   },
   props: {},
   data() {
@@ -113,13 +106,13 @@ export default {
   },
 
   mounted() {
-    this.fetchData();
+    this.getReservedAndRented();
   },
 
   methods: {
-    fetchData() {
+    getReservedAndRented() {
       let vm = this;
-      axios.get(apiVersion.version + '/books/active').then((response) => {
+      axios.get(route('active')).then((response) => {
         vm.books = response.data;
       });
     },
@@ -130,8 +123,8 @@ export default {
         vm.$notify({
           group: 'all',
           title: 'Rented',
-        })
-        vm.fetchData();
+        });
+        vm.getReservedAndRented();
       });
     },
 
@@ -143,7 +136,7 @@ export default {
           group: 'all',
           title: text,
         })
-        vm.fetchData();
+        vm.getReservedAndRented();
       });
     }
   }

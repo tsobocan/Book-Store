@@ -14,10 +14,25 @@
           <div class="p-6">
             <div class="flex justify-between w-full">
               <span class="text-indigo-700 text-xl font-black">All Books</span>
-              <button type="button" @click="openBookManageModal(null)" v-if="$page.props.isAdmin" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150">Add Book
+              <button type="button" @click="openBookManageModal(null)" v-if="$page.props.isAdmin"
+                      class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150">
+                Add Book
               </button>
             </div>
 
+            <div class="flex flex-col" v-if="$page.props.user && $page.props.isAdmin">
+              <div class="font-bold">Search options</div>
+              <div class="flex justify-between w-full bg-gray-100 p-2">
+                <jet-input type="text" class="mt-1 block w-1/4" placeholder="Book Title" v-model="search.title"/>
+                <jet-input type="text" class="mt-1 block w-1/4" placeholder="Author" v-model="search.author"/>
+                <jet-input type="text" class="mt-1 block w-1/4" placeholder="Year" v-model="search.year"/>
+                <button type="button" @click="getBooks"
+                        class="inline-flex items-center px-4 py-2 bg-blue-200 border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150">
+                  Search
+                </button>
+              </div>
+
+            </div>
             <div class="flex items-center mt-5">
               <table class="min-w-full">
                 <thead>
@@ -48,9 +63,11 @@
                   </td>
                   <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
                     <div class="flex items-center">
-                      <span role="button" @click="startAction('reserve', book)" v-if="$page.props.user">Reserve</span>
-                      <span role="button" @click="openBookManageModal(book)"  class="mx-3" v-if="$page.props.user && $page.props.isAdmin">Edit</span>
-
+                      <span role="button" @click="startAction('reserve', book)" class="mx-1" v-if="$page.props.user">Reserve</span>
+                      <span role="button" @click="openBookManageModal(book)" class="mx-1"
+                            v-if="$page.props.user && $page.props.isAdmin">Edit</span>
+                      <span role="button" @click="deleteBook(book.id)" class="mx-1 text-red-500"
+                            v-if="$page.props.user && $page.props.isAdmin">Delete</span>
                     </div>
                   </td>
                 </tr>
@@ -103,7 +120,7 @@
 
               <jet-dialog-modal :show="confirmBookEdit" @close="closeBookModal">
                 <template #title>
-                 <span class="font-black"> Manage Book</span>
+                  <span class="font-black"> Manage Book</span>
                 </template>
 
                 <template #content>
@@ -184,7 +201,11 @@ export default {
       confirmBookEdit: false,
       books: [],
       options: [],
-
+      search : {
+        title : null,
+        year : null,
+        author : null,
+      },
       formBook: {
         processing: false,
         quantity: 0,
@@ -217,17 +238,35 @@ export default {
   },
 
   mounted() {
-   this.getBooks();
+    this.getBooks();
 
   },
 
   methods: {
-    getBooks(){
+    getBooks() {
       let vm = this;
-      axios.get(apiVersion.version + '/books/all').then((response) => {
+      const query = Object.keys(this.search)
+          .map(key => {
+            if(this.search[key] !== null){
+              return `${key}=${this.search[key]}`
+            }
+          }).filter(x => !!x)
+          .join('&');
+      axios.get(apiVersion.version + '/books?' + query).then((response) => {
         vm.books = response.data;
       });
     },
+    deleteBook(id){
+      let vm = this;
+      axios.post(route('delete'), {id : id}).then((response) => {
+        vm.$notify({
+          group: 'all',
+          title: 'Deleted.',
+        });
+        vm.getBooks();
+      });
+    },
+
     saveBookDetails() {
 
       this.formBook.processing = true;
@@ -286,7 +325,7 @@ export default {
       });
     },
 
-    resetBookManage(){
+    resetBookManage() {
       this.formBook.quantity = 0;
       this.formBook.id = null;
       this.formBook.author = null;
@@ -297,7 +336,7 @@ export default {
     openBookManageModal(book = null) {
       this.resetBookManage();
 
-      if(book !== null){
+      if (book !== null) {
         this.formBook.quantity = book.quantity;
         this.formBook.id = book.id;
         this.formBook.author = book.author.name;

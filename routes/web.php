@@ -31,12 +31,11 @@
 
     Route::middleware('auth:sanctum')->post('/book/action', [HomeController::class, 'createAction'])->name('action');
     Route::middleware('auth:sanctum')->post('/book/save', [HomeController::class, 'editBook'])->name('edit');
+    Route::middleware('auth:sanctum')->post('/book/delete', [HomeController::class, 'deleteBook'])->name('delete');
     Route::middleware('auth:sanctum')->post('/users', [HomeController::class, 'fetchUsers'])->name('users');
-
-    Route::get('/search', function () {
-        return Inertia::render('BookSearch');
-    })->name('books');
-
+    Route::middleware('auth:sanctum')->get('/books/active', [HomeController::class, 'activeBooks'])->name('active');
+    Route::middleware('auth:sanctum')->post('/books/rent', [HomeController::class, 'rent'])->name('rent');
+    Route::middleware('auth:sanctum')->post('/books/return', [HomeController::class, 'returnBook'])->name('return');
 
     Route::get('/actions', function () {
         return Inertia::render('Actions');
